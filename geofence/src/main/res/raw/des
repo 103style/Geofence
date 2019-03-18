@@ -1,0 +1,85 @@
+<PART 1: 后期需求更改>
+
+
+<PART 2: 控件属性>
+GeofenceView
+/**
+     * 圆形
+     */
+    public static final int TYPE_PROXIMITY = 1;
+    /**
+     * 六边形
+     */
+    public static final int TYPE_POLYGON = 2;
+    /**
+     * 当前的图形类别
+     */
+    private int mType;
+    /**
+     * 对应的画笔
+     */
+    private Paint linePaint, dotPaint;
+    /**
+     * 半径、线宽
+     */
+    private int dotRadius, lineWidth;
+    /**
+     * 半径（圆形） 两点之前的距离（正六边形）
+     */
+    private int mRadius, circleRadius;
+
+
+    private Path path;
+    /**
+     * 圆形对应的点坐标
+     * -     1
+     * -  0     2
+     * -     3
+     * -
+     * 六边形对应的点坐标
+     * -     1    2
+     * -
+     * -  0          3
+     * -
+     * -     5    4
+     */
+    private float[][] arrayProximity, arrayPolygon;
+
+    /**
+     * 区域遮罩颜色
+     */
+    private Shader mShader;
+
+    /**
+     * 颜色
+     */
+    private int lineColor, dotLineColor;
+    /**
+     * 是否能拖动点
+     * true 是
+     * false 否
+     */
+    private boolean statueMove;
+    /**
+     * 拖动点的下标
+     */
+    private int moveDotIndex = -1;
+
+<PART 3: method>
+    //{TYPE_PROXIMITY, TYPE_POLYGON}
+    public void setType(@GEOFENCETYPE int mType) : 设置圆形 还是 六边形
+
+    public void setCircleRadius(int circleRadius) : 设置圆形的半径
+
+<PART 4: xml>
+
+    <com.tcl.xiaokeluo.GeofenceView
+        android:id="@+id/gv_test"
+        android:layout_width="match_parent"
+        app:gv_line_width="2dp"  // 圆 和 六边形的边的 宽度
+        app:gv_dot_radius="5dp"  // 六边形 标点的 半径
+        app:gv_dot_line_color="@color/colorPrimary" 六边形 标点的 边的颜色
+        app:gv_radius="100dp" //
+        app:gv_type="TYPE_PROXIMITY" // 六边形TYPE_POLYGON 还是 圆形 TYPE_PROXIMITY
+        app:gv_line_color="@color/colorAccent" 圆 和 六边形的 边的颜色
+        android:layout_height="match_parent"/>

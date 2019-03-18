@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <SeekBar
+        android:id="@+id/sb_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.tcl.xiaokeluo.GeofenceView
+        android:id="@+id/gv_test"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:background="#00DDDD"
+        app:gv_dot_line_color="@color/colorPrimary"
+        app:gv_dot_radius="5dp"
+        app:gv_line_color="@color/colorAccent"
+        app:gv_line_width="2dp"
+        app:gv_radius="100dp"
+        app:gv_type="TYPE_PROXIMITY" />
+
+</FrameLayout>
