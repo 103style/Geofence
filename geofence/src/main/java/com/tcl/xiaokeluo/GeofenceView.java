@@ -41,11 +41,11 @@ public class GeofenceView extends View {
     /**
      * 半径、线宽
      */
-    private int dotRadius, tempDotRadius, lineWidth;
+    private float dotRadius, lineWidth;
     /**
      * 半径（圆形） 两点之前的距离（正六边形）
      */
-    private int mRadius, circleRadius;
+    private float mRadius, circleRadius;
 
 
     private Path path;
@@ -85,7 +85,7 @@ public class GeofenceView extends View {
     /**
      * 地图的缩放级别
      */
-    private int mapZoom;
+    private float mapZoom;
 
     public GeofenceView(Context context) {
         this(context, null);
@@ -107,7 +107,7 @@ public class GeofenceView extends View {
     private void initTypeArray(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.GeofenceView);
         mType = ta.getInt(R.styleable.GeofenceView_gv_type, TYPE_PROXIMITY);
-        tempDotRadius = dotRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_dot_radius, 16);
+        dotRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_dot_radius, 16);
         circleRadius = mRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_radius, 200);
         dotLineColor = ta.getColor(R.styleable.GeofenceView_gv_dot_line_color, 0xFF398EFF);
         lineColor = ta.getColor(R.styleable.GeofenceView_gv_line_color, 0xFF398EFF);
@@ -174,10 +174,12 @@ public class GeofenceView extends View {
      *
      * @param mapZoom 地图缩放
      */
-    public void setMapZoom(int mapZoom) {
+    public void setMapZoom(float mapZoom) {
+        if (this.mapZoom == mapZoom) {
+            return;
+        }
         this.mapZoom = mapZoom;
-        circleRadius = mRadius / mapZoom;
-        tempDotRadius = dotRadius / mapZoom;
+        circleRadius = circleRadius / mapZoom;
         initDotArray();
         invalidate();
     }
@@ -188,7 +190,6 @@ public class GeofenceView extends View {
     public void setType(@GEOFENCETYPE int mType) {
         this.mType = mType;
         circleRadius = mRadius / mapZoom;
-        tempDotRadius = dotRadius / mapZoom;
         initDotArray();
         invalidate();
     }
@@ -209,7 +210,6 @@ public class GeofenceView extends View {
      */
     public void setCircleRadius(int circleRadius) {
         this.circleRadius = circleRadius / mapZoom;
-        tempDotRadius = dotRadius / mapZoom;
         if (!isPolygon()) {
             invalidate();
         }
@@ -263,12 +263,12 @@ public class GeofenceView extends View {
      * 画六边形相关的点圆
      */
     private void drawPolygonDotCircle(Canvas canvas) {
-        canvas.drawCircle(arrayPolygon[0][0], arrayPolygon[0][1], tempDotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[1][0], arrayPolygon[1][1], tempDotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[2][0], arrayPolygon[2][1], tempDotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[3][0], arrayPolygon[3][1], tempDotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[4][0], arrayPolygon[4][1], tempDotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[5][0], arrayPolygon[5][1], tempDotRadius, dotPaint);
+        canvas.drawCircle(arrayPolygon[0][0], arrayPolygon[0][1], dotRadius, dotPaint);
+        canvas.drawCircle(arrayPolygon[1][0], arrayPolygon[1][1], dotRadius, dotPaint);
+        canvas.drawCircle(arrayPolygon[2][0], arrayPolygon[2][1], dotRadius, dotPaint);
+        canvas.drawCircle(arrayPolygon[3][0], arrayPolygon[3][1], dotRadius, dotPaint);
+        canvas.drawCircle(arrayPolygon[4][0], arrayPolygon[4][1], dotRadius, dotPaint);
+        canvas.drawCircle(arrayPolygon[5][0], arrayPolygon[5][1], dotRadius, dotPaint);
     }
 
     /**
@@ -320,7 +320,7 @@ public class GeofenceView extends View {
      */
     private boolean checkPointPolygon(float x, float y) {
         for (int i = 0; i < arrayPolygon.length; i++) {
-            if (Math.abs(x - arrayPolygon[i][0]) < tempDotRadius && Math.abs(y - arrayPolygon[i][1]) < tempDotRadius) {
+            if (Math.abs(x - arrayPolygon[i][0]) < dotRadius && Math.abs(y - arrayPolygon[i][1]) < dotRadius) {
                 moveDotIndex = i;
                 statueMove = true;
                 return true;
@@ -334,8 +334,8 @@ public class GeofenceView extends View {
      */
     private void movePoint(float x, float y) {
         //边界检查
-        if (x < tempDotRadius || y < tempDotRadius
-                || x + tempDotRadius > getMeasuredWidth() || y + tempDotRadius > getMeasuredHeight()) {
+        if (x < dotRadius || y < dotRadius
+                || x + dotRadius > getMeasuredWidth() || y + dotRadius > getMeasuredHeight()) {
             return;
         }
         if (isPolygon() && pointLegal(x, y)) {
@@ -362,8 +362,8 @@ public class GeofenceView extends View {
         for (int i = 0; i < arrayPolygon.length; i++) {
             //除去当前点 然后当前点和其他点中心距离 差距要大于两个半径
             if (i != moveDotIndex
-                    && Math.abs(x - arrayPolygon[i][0]) <= tempDotRadius * 2
-                    && Math.abs(y - arrayPolygon[i][1]) <= tempDotRadius * 2) {
+                    && Math.abs(x - arrayPolygon[i][0]) <= dotRadius * 2
+                    && Math.abs(y - arrayPolygon[i][1]) <= dotRadius * 2) {
                 return true;
             }
         }
