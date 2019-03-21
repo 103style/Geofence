@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                geofenceView.setCircleRadius(progress);
+                geofenceView.setMapZoom(1 + progress);
             }
 
             @Override

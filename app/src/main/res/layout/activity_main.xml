@@ -18,7 +18,7 @@
         android:layout_gravity="center"
         android:background="#00DDDD"
         app:gv_dot_line_color="@color/colorPrimary"
-        app:gv_dot_radius="5dp"
+        app:gv_dot_radius="10dp"
         app:gv_line_color="@color/colorAccent"
         app:gv_line_width="2dp"
         app:gv_radius="100dp"

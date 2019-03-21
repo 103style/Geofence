@@ -43,14 +43,21 @@ public class GeofenceView extends View {
      */
     private float dotRadius, lineWidth;
     /**
-     * 半径（圆形） 两点之前的距离（正六边形）
+     * 设置的初始半径
      */
-    private float mRadius, circleRadius;
-
+    private float mRadius;
+    /**
+     * 半径（圆形） 两点之前的距离（正六边形） 随缩放改变
+     */
+    private float circleRadius;
+    /**
+     * 设置的圆的半径 不随缩放改变
+     */
+    private float circleSetRadius;
 
     private Path path;
     /**
-     * 圆形 和  六边形对应的点坐标
+     * 圆形 和  六边形对应的点坐标  始终是不缩放的坐标
      * -     1
      * -  0     2
      * -     3
@@ -62,6 +69,10 @@ public class GeofenceView extends View {
      * -     5    4
      */
     private float[][] arrayProximity, arrayPolygon;
+    /**
+     * 保存缩放变化之后的坐标
+     */
+    private float[][] tempArrayProximity, tempArrayPolygon;
 
     /**
      * 区域遮罩颜色
@@ -108,7 +119,7 @@ public class GeofenceView extends View {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.GeofenceView);
         mType = ta.getInt(R.styleable.GeofenceView_gv_type, TYPE_PROXIMITY);
         dotRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_dot_radius, 16);
-        circleRadius = mRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_radius, 200);
+        circleSetRadius = circleRadius = mRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_radius, 200);
         dotLineColor = ta.getColor(R.styleable.GeofenceView_gv_dot_line_color, 0xFF398EFF);
         lineColor = ta.getColor(R.styleable.GeofenceView_gv_line_color, 0xFF398EFF);
         lineWidth = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_line_width, 5);
@@ -145,28 +156,30 @@ public class GeofenceView extends View {
      */
     private void initDotArray() {
         arrayProximity = new float[4][2];
-        arrayProximity[0][0] = getMeasuredWidth() / 2 - circleRadius;
-        arrayProximity[0][1] = getMeasuredHeight() / 2;
-        arrayProximity[1][0] = getMeasuredWidth() / 2;
-        arrayProximity[1][1] = getMeasuredHeight() / 2 - circleRadius;
-        arrayProximity[2][0] = getMeasuredWidth() / 2 + circleRadius;
-        arrayProximity[2][1] = getMeasuredHeight() / 2;
-        arrayProximity[3][0] = getMeasuredWidth() / 2 + circleRadius;
-        arrayProximity[3][1] = getMeasuredHeight() / 2 + circleRadius;
+        tempArrayProximity = new float[4][2];
+        tempArrayProximity[0][0] = arrayProximity[0][0] = getMeasuredWidth() / 2 - circleRadius;
+        tempArrayProximity[0][1] = arrayProximity[0][1] = getMeasuredHeight() / 2;
+        tempArrayProximity[1][0] = arrayProximity[1][0] = getMeasuredWidth() / 2;
+        tempArrayProximity[1][1] = arrayProximity[1][1] = getMeasuredHeight() / 2 - circleRadius;
+        tempArrayProximity[2][0] = arrayProximity[2][0] = getMeasuredWidth() / 2 + circleRadius;
+        tempArrayProximity[2][1] = arrayProximity[2][1] = getMeasuredHeight() / 2;
+        tempArrayProximity[3][0] = arrayProximity[3][0] = getMeasuredWidth() / 2 + circleRadius;
+        tempArrayProximity[3][1] = arrayProximity[3][1] = getMeasuredHeight() / 2 + circleRadius;
 
         arrayPolygon = new float[6][2];
-        arrayPolygon[0][0] = getMeasuredWidth() / 2 - circleRadius;
-        arrayPolygon[0][1] = getMeasuredHeight() / 2;
-        arrayPolygon[1][0] = getMeasuredWidth() / 2 - (int) (circleRadius * Math.cos(Math.PI / 3));
-        arrayPolygon[1][1] = getMeasuredHeight() / 2 - (int) (circleRadius * Math.sin(Math.PI / 3));
-        arrayPolygon[2][0] = getMeasuredWidth() / 2 - (int) (circleRadius * Math.cos(Math.PI / 3)) + circleRadius;
-        arrayPolygon[2][1] = getMeasuredHeight() / 2 - (int) (circleRadius * Math.sin(Math.PI / 3));
-        arrayPolygon[3][0] = getMeasuredWidth() / 2 + circleRadius;
-        arrayPolygon[3][1] = getMeasuredHeight() / 2;
-        arrayPolygon[4][0] = getMeasuredWidth() / 2 - (int) (circleRadius * Math.cos(Math.PI / 3)) + circleRadius;
-        arrayPolygon[4][1] = getMeasuredHeight() / 2 + (int) (circleRadius * Math.sin(Math.PI / 3));
-        arrayPolygon[5][0] = getMeasuredWidth() / 2 - (int) (circleRadius * Math.cos(Math.PI / 3));
-        arrayPolygon[5][1] = getMeasuredHeight() / 2 + (int) (circleRadius * Math.sin(Math.PI / 3));
+        tempArrayPolygon = new float[6][2];
+        tempArrayPolygon[0][0] = arrayPolygon[0][0] = getMeasuredWidth() / 2 - circleRadius;
+        tempArrayPolygon[0][1] = arrayPolygon[0][1] = getMeasuredHeight() / 2;
+        tempArrayPolygon[1][0] = arrayPolygon[1][0] = getMeasuredWidth() / 2 - (int) (circleRadius * Math.cos(Math.PI / 3));
+        tempArrayPolygon[1][1] = arrayPolygon[1][1] = getMeasuredHeight() / 2 - (int) (circleRadius * Math.sin(Math.PI / 3));
+        tempArrayPolygon[2][0] = arrayPolygon[2][0] = getMeasuredWidth() / 2 - (int) (circleRadius * Math.cos(Math.PI / 3)) + circleRadius;
+        tempArrayPolygon[2][1] = arrayPolygon[2][1] = getMeasuredHeight() / 2 - (int) (circleRadius * Math.sin(Math.PI / 3));
+        tempArrayPolygon[3][0] = arrayPolygon[3][0] = getMeasuredWidth() / 2 + circleRadius;
+        tempArrayPolygon[3][1] = arrayPolygon[3][1] = getMeasuredHeight() / 2;
+        tempArrayPolygon[4][0] = arrayPolygon[4][0] = getMeasuredWidth() / 2 - (int) (circleRadius * Math.cos(Math.PI / 3)) + circleRadius;
+        tempArrayPolygon[4][1] = arrayPolygon[4][1] = getMeasuredHeight() / 2 + (int) (circleRadius * Math.sin(Math.PI / 3));
+        tempArrayPolygon[5][0] = arrayPolygon[5][0] = getMeasuredWidth() / 2 - (int) (circleRadius * Math.cos(Math.PI / 3));
+        tempArrayPolygon[5][1] = arrayPolygon[5][1] = getMeasuredHeight() / 2 + (int) (circleRadius * Math.sin(Math.PI / 3));
     }
 
     /**
@@ -179,7 +192,7 @@ public class GeofenceView extends View {
             return;
         }
         this.mapZoom = mapZoom;
-        circleRadius = circleRadius / mapZoom;
+        circleRadius = circleSetRadius / mapZoom;
         updateDotArray();
         invalidate();
     }
@@ -201,29 +214,29 @@ public class GeofenceView extends View {
      * 更新坐标点 x y 值
      */
     private void updateDotArray() {
-        if (arrayProximity != null) {
-            arrayProximity[0][0] /= mapZoom;
-            arrayProximity[0][1] /= mapZoom;
-            arrayProximity[1][0] /= mapZoom;
-            arrayProximity[1][1] /= mapZoom;
-            arrayProximity[2][0] /= mapZoom;
-            arrayProximity[2][1] /= mapZoom;
-            arrayProximity[3][0] /= mapZoom;
-            arrayProximity[3][1] /= mapZoom;
+        if (tempArrayProximity != null) {
+            tempArrayProximity[0][0] = getMeasuredWidth() / 2 + (arrayProximity[0][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayProximity[0][1] = getMeasuredHeight() / 2 + (arrayProximity[0][1] - getMeasuredHeight() / 2) / mapZoom;
+            tempArrayProximity[1][0] = getMeasuredWidth() / 2 + (arrayProximity[1][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayProximity[1][1] = getMeasuredHeight() / 2 + (arrayProximity[1][1] - getMeasuredHeight() / 2) / mapZoom;
+            tempArrayProximity[2][0] = getMeasuredWidth() / 2 + (arrayProximity[2][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayProximity[2][1] = getMeasuredHeight() / 2 + (arrayProximity[2][1] - getMeasuredHeight() / 2) / mapZoom;
+            tempArrayProximity[3][0] = getMeasuredWidth() / 2 + (arrayProximity[3][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayProximity[3][1] = getMeasuredHeight() / 2 + (arrayProximity[3][1] - getMeasuredHeight() / 2) / mapZoom;
         }
-        if (arrayPolygon != null) {
-            arrayPolygon[0][0] /= mapZoom;
-            arrayPolygon[0][1] /= mapZoom;
-            arrayPolygon[1][0] /= mapZoom;
-            arrayPolygon[1][1] /= mapZoom;
-            arrayPolygon[2][0] /= mapZoom;
-            arrayPolygon[2][1] /= mapZoom;
-            arrayPolygon[3][0] /= mapZoom;
-            arrayPolygon[3][1] /= mapZoom;
-            arrayPolygon[4][0] /= mapZoom;
-            arrayPolygon[4][1] /= mapZoom;
-            arrayPolygon[5][0] /= mapZoom;
-            arrayPolygon[5][1] /= mapZoom;
+        if (tempArrayPolygon != null) {
+            tempArrayPolygon[0][0] = getMeasuredWidth() / 2 + (arrayPolygon[0][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayPolygon[0][1] = getMeasuredHeight() / 2 + (arrayPolygon[0][1] - getMeasuredHeight() / 2) / mapZoom;
+            tempArrayPolygon[1][0] = getMeasuredWidth() / 2 + (arrayPolygon[1][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayPolygon[1][1] = getMeasuredHeight() / 2 + (arrayPolygon[1][1] - getMeasuredHeight() / 2) / mapZoom;
+            tempArrayPolygon[2][0] = getMeasuredWidth() / 2 + (arrayPolygon[2][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayPolygon[2][1] = getMeasuredHeight() / 2 + (arrayPolygon[2][1] - getMeasuredHeight() / 2) / mapZoom;
+            tempArrayPolygon[3][0] = getMeasuredWidth() / 2 + (arrayPolygon[3][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayPolygon[3][1] = getMeasuredHeight() / 2 + (arrayPolygon[3][1] - getMeasuredHeight() / 2) / mapZoom;
+            tempArrayPolygon[4][0] = getMeasuredWidth() / 2 + (arrayPolygon[4][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayPolygon[4][1] = getMeasuredHeight() / 2 + (arrayPolygon[4][1] - getMeasuredHeight() / 2) / mapZoom;
+            tempArrayPolygon[5][0] = getMeasuredWidth() / 2 + (arrayPolygon[5][0] - getMeasuredWidth() / 2) / mapZoom;
+            tempArrayPolygon[5][1] = getMeasuredHeight() / 2 + (arrayPolygon[5][1] - getMeasuredHeight() / 2) / mapZoom;
         }
     }
 
@@ -233,7 +246,9 @@ public class GeofenceView extends View {
         if (mType == TYPE_PROXIMITY) {
             drawProximity(canvas);
         } else {
-            setVisibility(dotRadius > circleRadius ? GONE : VISIBLE);
+            if (dotRadius * 2 > circleRadius) {
+                return;
+            }
             drawPolygonLine(canvas);
             drawPolygonDot(canvas);
         }
@@ -243,10 +258,11 @@ public class GeofenceView extends View {
      * 设置圆形的半径
      */
     public void setCircleRadius(float circleRadius) {
-        if (circleRadius == this.circleRadius) {
+        if (circleRadius == this.circleSetRadius) {
             return;
         }
-        this.circleRadius = circleRadius / mapZoom;
+        circleSetRadius = circleRadius;
+        this.circleRadius = circleSetRadius / mapZoom;
         if (!isPolygon()) {
             invalidate();
         }
@@ -268,12 +284,12 @@ public class GeofenceView extends View {
      * 画六边形相关的先
      */
     private void drawPolygonLine(Canvas canvas) {
-        path.moveTo(arrayPolygon[0][0], arrayPolygon[0][1]);
-        path.lineTo(arrayPolygon[1][0], arrayPolygon[1][1]);
-        path.lineTo(arrayPolygon[2][0], arrayPolygon[2][1]);
-        path.lineTo(arrayPolygon[3][0], arrayPolygon[3][1]);
-        path.lineTo(arrayPolygon[4][0], arrayPolygon[4][1]);
-        path.lineTo(arrayPolygon[5][0], arrayPolygon[5][1]);
+        path.moveTo(tempArrayPolygon[0][0], tempArrayPolygon[0][1]);
+        path.lineTo(tempArrayPolygon[1][0], tempArrayPolygon[1][1]);
+        path.lineTo(tempArrayPolygon[2][0], tempArrayPolygon[2][1]);
+        path.lineTo(tempArrayPolygon[3][0], tempArrayPolygon[3][1]);
+        path.lineTo(tempArrayPolygon[4][0], tempArrayPolygon[4][1]);
+        path.lineTo(tempArrayPolygon[5][0], tempArrayPolygon[5][1]);
         path.close();
         linePaint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(path, linePaint);
@@ -300,12 +316,12 @@ public class GeofenceView extends View {
      * 画六边形相关的点圆
      */
     private void drawPolygonDotCircle(Canvas canvas) {
-        canvas.drawCircle(arrayPolygon[0][0], arrayPolygon[0][1], dotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[1][0], arrayPolygon[1][1], dotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[2][0], arrayPolygon[2][1], dotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[3][0], arrayPolygon[3][1], dotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[4][0], arrayPolygon[4][1], dotRadius, dotPaint);
-        canvas.drawCircle(arrayPolygon[5][0], arrayPolygon[5][1], dotRadius, dotPaint);
+        canvas.drawCircle(tempArrayPolygon[0][0], tempArrayPolygon[0][1], dotRadius, dotPaint);
+        canvas.drawCircle(tempArrayPolygon[1][0], tempArrayPolygon[1][1], dotRadius, dotPaint);
+        canvas.drawCircle(tempArrayPolygon[2][0], tempArrayPolygon[2][1], dotRadius, dotPaint);
+        canvas.drawCircle(tempArrayPolygon[3][0], tempArrayPolygon[3][1], dotRadius, dotPaint);
+        canvas.drawCircle(tempArrayPolygon[4][0], tempArrayPolygon[4][1], dotRadius, dotPaint);
+        canvas.drawCircle(tempArrayPolygon[5][0], tempArrayPolygon[5][1], dotRadius, dotPaint);
     }
 
     /**
@@ -376,8 +392,10 @@ public class GeofenceView extends View {
             return;
         }
         if (isPolygon() && pointLegal(x, y)) {
-            arrayPolygon[moveDotIndex][0] = x;
-            arrayPolygon[moveDotIndex][1] = y;
+            tempArrayPolygon[moveDotIndex][0] = x;
+            tempArrayPolygon[moveDotIndex][1] = y;
+            arrayPolygon[moveDotIndex][0] = getMeasuredWidth() / 2 + mapZoom * (x - getMeasuredWidth() / 2);
+            arrayPolygon[moveDotIndex][1] = getMeasuredHeight() / 2 + mapZoom * (y - getMeasuredWidth() / 2);
             invalidate();
         }
     }
