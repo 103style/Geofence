@@ -180,7 +180,7 @@ public class GeofenceView extends View {
         }
         this.mapZoom = mapZoom;
         circleRadius = circleRadius / mapZoom;
-        initDotArray();
+        updateDotArray();
         invalidate();
     }
 
@@ -188,10 +188,43 @@ public class GeofenceView extends View {
      * 设置展示形状
      */
     public void setType(@GEOFENCETYPE int mType) {
+        if (this.mType == mType) {
+            return;
+        }
         this.mType = mType;
         circleRadius = mRadius / mapZoom;
-        initDotArray();
+        updateDotArray();
         invalidate();
+    }
+
+    /**
+     * 更新坐标点 x y 值
+     */
+    private void updateDotArray() {
+        if (arrayProximity != null) {
+            arrayProximity[0][0] /= mapZoom;
+            arrayProximity[0][1] /= mapZoom;
+            arrayProximity[1][0] /= mapZoom;
+            arrayProximity[1][1] /= mapZoom;
+            arrayProximity[2][0] /= mapZoom;
+            arrayProximity[2][1] /= mapZoom;
+            arrayProximity[3][0] /= mapZoom;
+            arrayProximity[3][1] /= mapZoom;
+        }
+        if (arrayPolygon != null) {
+            arrayPolygon[0][0] /= mapZoom;
+            arrayPolygon[0][1] /= mapZoom;
+            arrayPolygon[1][0] /= mapZoom;
+            arrayPolygon[1][1] /= mapZoom;
+            arrayPolygon[2][0] /= mapZoom;
+            arrayPolygon[2][1] /= mapZoom;
+            arrayPolygon[3][0] /= mapZoom;
+            arrayPolygon[3][1] /= mapZoom;
+            arrayPolygon[4][0] /= mapZoom;
+            arrayPolygon[4][1] /= mapZoom;
+            arrayPolygon[5][0] /= mapZoom;
+            arrayPolygon[5][1] /= mapZoom;
+        }
     }
 
     @Override
@@ -200,6 +233,7 @@ public class GeofenceView extends View {
         if (mType == TYPE_PROXIMITY) {
             drawProximity(canvas);
         } else {
+            setVisibility(dotRadius > circleRadius ? GONE : VISIBLE);
             drawPolygonLine(canvas);
             drawPolygonDot(canvas);
         }
@@ -208,7 +242,10 @@ public class GeofenceView extends View {
     /**
      * 设置圆形的半径
      */
-    public void setCircleRadius(int circleRadius) {
+    public void setCircleRadius(float circleRadius) {
+        if (circleRadius == this.circleRadius) {
+            return;
+        }
         this.circleRadius = circleRadius / mapZoom;
         if (!isPolygon()) {
             invalidate();
