@@ -211,6 +211,48 @@ public class GeofenceView extends View {
     }
 
     /**
+     * 设置圆形的 四个点坐标
+     * -     1
+     * -  0     2
+     * -     3
+     */
+    public void setArrayProximity(float[][] arrayProximity) {
+        if (arrayProximity == null || arrayProximity.length != tempArrayProximity.length) {
+            throw new IndexOutOfBoundsException("arrayProximity length should be 4");
+        }
+        this.arrayProximity = arrayProximity;
+    }
+
+    /**
+     * 设置多边形的 六个点坐标
+     * -     1    2
+     * -
+     * -  0          3
+     * -
+     * -     5    4
+     */
+    public void setArrayPolygon(float[][] arrayPolygon) {
+        if (arrayPolygon == null || arrayPolygon.length != tempArrayPolygon.length) {
+            throw new IndexOutOfBoundsException("arrayProximity length should be 6");
+        }
+        this.arrayPolygon = arrayPolygon;
+    }
+
+    /**
+     * 获取当圆的的四个点坐标
+     */
+    public float[][] getTempArrayProximity() {
+        return tempArrayProximity;
+    }
+
+    /**
+     * 获取六边形的六个点坐标
+     */
+    public float[][] getTempArrayPolygon() {
+        return tempArrayPolygon;
+    }
+
+    /**
      * 更新坐标点 x y 值
      */
     private void updateDotArray() {
