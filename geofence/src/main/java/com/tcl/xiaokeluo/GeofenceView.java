@@ -221,6 +221,8 @@ public class GeofenceView extends View {
             throw new IndexOutOfBoundsException("arrayProximity length should be 4");
         }
         this.arrayProximity = arrayProximity;
+        updateDotArray();
+        invalidate();
     }
 
     /**
@@ -236,6 +238,8 @@ public class GeofenceView extends View {
             throw new IndexOutOfBoundsException("arrayProximity length should be 6");
         }
         this.arrayPolygon = arrayPolygon;
+        updateDotArray();
+        invalidate();
     }
 
     /**
