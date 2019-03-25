@@ -183,18 +183,10 @@ public class GeofenceView extends View {
     }
 
     /**
-     * 设置地图缩放级别
-     *
-     * @param mapZoom 地图缩放
+     * 获取当前的图形类型
      */
-    public void setMapZoom(float mapZoom) {
-        if (this.mapZoom == mapZoom) {
-            return;
-        }
-        this.mapZoom = mapZoom;
-        circleRadius = circleSetRadius / mapZoom;
-        updateDotArray();
-        invalidate();
+    public int getType() {
+        return mType;
     }
 
     /**
@@ -211,17 +203,35 @@ public class GeofenceView extends View {
     }
 
     /**
+     * 设置地图缩放级别
+     *
+     * @param mapZoom 地图缩放
+     */
+    public void setMapZoom(float mapZoom) {
+        if (this.mapZoom == mapZoom) {
+            return;
+        }
+        this.mapZoom = mapZoom;
+        circleRadius = circleSetRadius / mapZoom;
+        updateDotArray();
+        invalidate();
+    }
+
+    /**
      * 设置圆形的 四个点坐标
      * -     1
      * -  0     2
      * -     3
      */
-    public void setArrayProximity(float[][] arrayProximity) {
-        if (arrayProximity == null || arrayProximity.length != tempArrayProximity.length) {
+    public void setArrayProximity(float[][] arrays) {
+        if (arrayProximity == null || arrays.length != tempArrayProximity.length) {
             throw new IndexOutOfBoundsException("arrayProximity length should be 4");
         }
-        this.arrayProximity = arrayProximity;
-        updateDotArray();
+        tempArrayPolygon = arrays;
+        for (int i = 0; i < arrays.length; i++) {
+            arrayProximity[i][0] = getMeasuredWidth() / 2 + mapZoom * (arrays[i][0] - getMeasuredWidth() / 2);
+            arrayProximity[i][1] = getMeasuredHeight() / 2 + mapZoom * (arrays[i][1] - getMeasuredHeight() / 2);
+        }
         invalidate();
     }
 
@@ -233,12 +243,15 @@ public class GeofenceView extends View {
      * -
      * -     5    4
      */
-    public void setArrayPolygon(float[][] arrayPolygon) {
-        if (arrayPolygon == null || arrayPolygon.length != tempArrayPolygon.length) {
+    public void setArrayPolygon(float[][] arrays) {
+        if (arrayPolygon == null || arrayPolygon.length != arrays.length) {
             throw new IndexOutOfBoundsException("arrayProximity length should be 6");
         }
-        this.arrayPolygon = arrayPolygon;
-        updateDotArray();
+        tempArrayPolygon = arrays;
+        for (int i = 0; i < arrays.length; i++) {
+            arrayPolygon[i][0] = getMeasuredWidth() / 2 + mapZoom * (arrays[i][0] - getMeasuredWidth() / 2);
+            arrayPolygon[i][1] = getMeasuredHeight() / 2 + mapZoom * (arrays[i][1] - getMeasuredHeight() / 2);
+        }
         invalidate();
     }
 
@@ -441,7 +454,7 @@ public class GeofenceView extends View {
             tempArrayPolygon[moveDotIndex][0] = x;
             tempArrayPolygon[moveDotIndex][1] = y;
             arrayPolygon[moveDotIndex][0] = getMeasuredWidth() / 2 + mapZoom * (x - getMeasuredWidth() / 2);
-            arrayPolygon[moveDotIndex][1] = getMeasuredHeight() / 2 + mapZoom * (y - getMeasuredWidth() / 2);
+            arrayPolygon[moveDotIndex][1] = getMeasuredHeight() / 2 + mapZoom * (y - getMeasuredHeight() / 2);
             invalidate();
         }
     }
