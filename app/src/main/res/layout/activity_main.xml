@@ -17,6 +17,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <com.tcl.xiaokeluo.GeofenceView
         android:id="@+id/gv_test"
         android:layout_width="300dp"
@@ -29,5 +33,4 @@
         app:gv_line_width="2dp"
         app:gv_radius="100dp"
         app:gv_type="TYPE_PROXIMITY" />
-
 </LinearLayout>

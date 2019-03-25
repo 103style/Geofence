@@ -21,7 +21,6 @@ import java.lang.annotation.RetentionPolicy;
  * 安全范围自定义view
  */
 public class GeofenceView extends View {
-
     /**
      * 圆形
      */
@@ -97,6 +96,10 @@ public class GeofenceView extends View {
      * 地图的缩放级别
      */
     private float mapZoom;
+    /**
+     * 是否已经init 坐标数组的大小
+     */
+    private boolean hasInitArray;
 
     public GeofenceView(Context context) {
         this(context, null);
@@ -108,6 +111,7 @@ public class GeofenceView extends View {
 
     public GeofenceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        hasInitArray = false;
         initTypeArray(context, attrs);
         init();
     }
@@ -146,9 +150,12 @@ public class GeofenceView extends View {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        initDotArray();
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (!hasInitArray) {
+            initDotArray();
+            hasInitArray = true;
+        }
     }
 
     /**
