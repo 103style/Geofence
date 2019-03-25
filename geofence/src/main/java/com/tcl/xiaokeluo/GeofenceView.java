@@ -431,8 +431,8 @@ public class GeofenceView extends View {
      * 六边形 检查触摸的位置是不是在点上
      */
     private boolean checkPointPolygon(float x, float y) {
-        for (int i = 0; i < arrayPolygon.length; i++) {
-            if (Math.abs(x - arrayPolygon[i][0]) < dotRadius && Math.abs(y - arrayPolygon[i][1]) < dotRadius) {
+        for (int i = 0; i < tempArrayPolygon.length; i++) {
+            if (Math.abs(x - tempArrayPolygon[i][0]) < dotRadius && Math.abs(y - tempArrayPolygon[i][1]) < dotRadius) {
                 moveDotIndex = i;
                 statueMove = true;
                 return true;
@@ -473,11 +473,11 @@ public class GeofenceView extends View {
      * @return true 有相交 不重绘
      */
     private boolean polygonDotIntersect(float x, float y) {
-        for (int i = 0; i < arrayPolygon.length; i++) {
+        for (int i = 0; i < tempArrayPolygon.length; i++) {
             //除去当前点 然后当前点和其他点中心距离 差距要大于两个半径
             if (i != moveDotIndex
-                    && Math.abs(x - arrayPolygon[i][0]) <= dotRadius * 2
-                    && Math.abs(y - arrayPolygon[i][1]) <= dotRadius * 2) {
+                    && Math.abs(x - tempArrayPolygon[i][0]) <= dotRadius * 2
+                    && Math.abs(y - tempArrayPolygon[i][1]) <= dotRadius * 2) {
                 return true;
             }
         }
@@ -489,42 +489,42 @@ public class GeofenceView extends View {
      */
     private boolean polygonLineIntersect(float x, float y) {
         //分别判断移动点的两边和其他不相连的三边是否相交  相交则return true
-        int s = arrayPolygon.length;
+        int s = tempArrayPolygon.length;
         if (checkLineIntersect(x, y,
-                arrayPolygon[(moveDotIndex + s + 1) % s][0], arrayPolygon[(moveDotIndex + s + 1) % s][1],
-                arrayPolygon[(moveDotIndex + s + 2) % s][0], arrayPolygon[(moveDotIndex + s + 2) % s][1],
-                arrayPolygon[(moveDotIndex + s + 3) % s][0], arrayPolygon[(moveDotIndex + s + 3) % s][1])) {
+                tempArrayPolygon[(moveDotIndex + s + 1) % s][0], tempArrayPolygon[(moveDotIndex + s + 1) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 2) % s][0], tempArrayPolygon[(moveDotIndex + s + 2) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 3) % s][0], tempArrayPolygon[(moveDotIndex + s + 3) % s][1])) {
             return true;
         }
         if (checkLineIntersect(x, y,
-                arrayPolygon[(moveDotIndex + s + 1) % s][0], arrayPolygon[(moveDotIndex + s + 1) % s][1],
-                arrayPolygon[(moveDotIndex + s + 3) % s][0], arrayPolygon[(moveDotIndex + s + 3) % s][1],
-                arrayPolygon[(moveDotIndex + s + 4) % s][0], arrayPolygon[(moveDotIndex + s + 4) % s][1])) {
+                tempArrayPolygon[(moveDotIndex + s + 1) % s][0], tempArrayPolygon[(moveDotIndex + s + 1) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 3) % s][0], tempArrayPolygon[(moveDotIndex + s + 3) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 4) % s][0], tempArrayPolygon[(moveDotIndex + s + 4) % s][1])) {
             return true;
         }
         if (checkLineIntersect(x, y,
-                arrayPolygon[(moveDotIndex + s + 1) % s][0], arrayPolygon[(moveDotIndex + s + 1) % s][1],
-                arrayPolygon[(moveDotIndex + s + 4) % s][0], arrayPolygon[(moveDotIndex + s + 4) % s][1],
-                arrayPolygon[(moveDotIndex + s + 5) % s][0], arrayPolygon[(moveDotIndex + s + 5) % s][1])) {
+                tempArrayPolygon[(moveDotIndex + s + 1) % s][0], tempArrayPolygon[(moveDotIndex + s + 1) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 4) % s][0], tempArrayPolygon[(moveDotIndex + s + 4) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 5) % s][0], tempArrayPolygon[(moveDotIndex + s + 5) % s][1])) {
             return true;
         }
 
         if (checkLineIntersect(x, y,
-                arrayPolygon[(moveDotIndex + s - 1) % s][0], arrayPolygon[(moveDotIndex + s - 1) % s][1],
-                arrayPolygon[(moveDotIndex + s + 1) % s][0], arrayPolygon[(moveDotIndex + s + 1) % s][1],
-                arrayPolygon[(moveDotIndex + s + 2) % s][0], arrayPolygon[(moveDotIndex + s + 2) % s][1])) {
+                tempArrayPolygon[(moveDotIndex + s - 1) % s][0], tempArrayPolygon[(moveDotIndex + s - 1) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 1) % s][0], tempArrayPolygon[(moveDotIndex + s + 1) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 2) % s][0], tempArrayPolygon[(moveDotIndex + s + 2) % s][1])) {
             return true;
         }
         if (checkLineIntersect(x, y,
-                arrayPolygon[(moveDotIndex + s - 1) % s][0], arrayPolygon[(moveDotIndex + s - 1) % s][1],
-                arrayPolygon[(moveDotIndex + s + 2) % s][0], arrayPolygon[(moveDotIndex + s + 2) % s][1],
-                arrayPolygon[(moveDotIndex + s + 3) % s][0], arrayPolygon[(moveDotIndex + s + 3) % s][1])) {
+                tempArrayPolygon[(moveDotIndex + s - 1) % s][0], tempArrayPolygon[(moveDotIndex + s - 1) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 2) % s][0], tempArrayPolygon[(moveDotIndex + s + 2) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 3) % s][0], tempArrayPolygon[(moveDotIndex + s + 3) % s][1])) {
             return true;
         }
         if (checkLineIntersect(x, y,
-                arrayPolygon[(moveDotIndex + s - 1) % s][0], arrayPolygon[(moveDotIndex + s - 1) % s][1],
-                arrayPolygon[(moveDotIndex + s + 3) % s][0], arrayPolygon[(moveDotIndex + s + 3) % s][1],
-                arrayPolygon[(moveDotIndex + s + 4) % s][0], arrayPolygon[(moveDotIndex + s + 4) % s][1])) {
+                tempArrayPolygon[(moveDotIndex + s - 1) % s][0], tempArrayPolygon[(moveDotIndex + s - 1) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 3) % s][0], tempArrayPolygon[(moveDotIndex + s + 3) % s][1],
+                tempArrayPolygon[(moveDotIndex + s + 4) % s][0], tempArrayPolygon[(moveDotIndex + s + 4) % s][1])) {
             return true;
         }
         return false;
