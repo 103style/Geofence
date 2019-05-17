@@ -1,13 +1,18 @@
 <resources>
     <declare-styleable name="GeofenceView">
-        <attr name="gv_type" >
-            <flag name="TYPE_PROXIMITY" value="1"/>
-            <flag name="TYPE_POLYGON" value="2"/>
+        <attr name="gv_type">
+            <flag name="TYPE_PROXIMITY" value="1" />
+            <flag name="TYPE_POLYGON" value="2" />
         </attr>
         <attr name="gv_dot_radius" format="dimension" />
         <attr name="gv_radius" format="dimension" />
+        <attr name="gv_area_color" format="color" />
         <attr name="gv_dot_line_color" format="color" />
         <attr name="gv_line_color" format="color" />
         <attr name="gv_line_width" format="dimension" />
+        <attr name="gv_text_size" format="dimension" />
+        <attr name="gv_text_bg_color" format="color" />
+        <attr name="gv_text_bg_stroke_color" format="color" />
+        <attr name="gv_text_color" format="color" />
     </declare-styleable>
 </resources>

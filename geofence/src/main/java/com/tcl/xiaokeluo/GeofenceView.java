@@ -36,7 +36,7 @@ public class GeofenceView extends View {
     /**
      * 对应的画笔
      */
-    private Paint linePaint, dotPaint;
+    private Paint linePaint, dotPaint, textPaint;
     /**
      * 半径、线宽
      */
@@ -54,7 +54,7 @@ public class GeofenceView extends View {
      */
     private float circleSetRadius;
 
-    private Path path;
+    private Path polygonLinePath, polygonTextBgPath;
     /**
      * 圆形 和  六边形对应的点坐标  始终是不缩放的坐标
      * -     1
@@ -76,12 +76,12 @@ public class GeofenceView extends View {
     /**
      * 区域遮罩颜色
      */
-    private Shader mShader;
+    private Shader mShader, mTextBgShader;
 
     /**
      * 颜色
      */
-    private int lineColor, dotLineColor;
+    private int lineColor, dotLineColor, areaColor, textBgColor, textStrokeColor, textColor;
     /**
      * 是否能拖动点
      * true 是
@@ -100,6 +100,39 @@ public class GeofenceView extends View {
      * 是否已经init 坐标数组的大小
      */
     private boolean hasInitArray;
+    /**
+     * 距离对应的值  默认 200
+     * 计算距离  y = mapZoom *  x / distanceRatio
+     */
+    private float distanceRatio;
+    /**
+     * 距离文字
+     */
+    private String disText;
+    /**
+     * 距离文字格式  100m
+     */
+    private String disTextFormat = "%dm";
+    /**
+     * 多边形距离的文字大小
+     */
+    private int textSize;
+    /**
+     * 计算文字的位置
+     */
+    private PolygonText polygonText;
+    /**
+     * 文字属性
+     */
+    private Paint.FontMetricsInt fontMetricsInt;
+    /**
+     * 文字基线高度
+     */
+    private int baseline;
+    /**
+     * 文字高度
+     */
+    private int textHeight;
 
     public GeofenceView(Context context) {
         this(context, null);
@@ -123,10 +156,15 @@ public class GeofenceView extends View {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.GeofenceView);
         mType = ta.getInt(R.styleable.GeofenceView_gv_type, TYPE_PROXIMITY);
         dotRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_dot_radius, 16);
-        circleSetRadius = circleRadius = mRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_radius, 200);
+        distanceRatio = circleSetRadius = circleRadius = mRadius = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_radius, 200);
         dotLineColor = ta.getColor(R.styleable.GeofenceView_gv_dot_line_color, 0xFF398EFF);
         lineColor = ta.getColor(R.styleable.GeofenceView_gv_line_color, 0xFF398EFF);
+        areaColor = ta.getColor(R.styleable.GeofenceView_gv_area_color, 0x1A398EFF);
+        textBgColor = ta.getColor(R.styleable.GeofenceView_gv_text_bg_color, 0xFFFFFFFF);
+        textStrokeColor = ta.getColor(R.styleable.GeofenceView_gv_text_bg_stroke_color, 0x61398EFF);
+        textColor = ta.getColor(R.styleable.GeofenceView_gv_text_color, 0xFF398EFF);
         lineWidth = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_line_width, 5);
+        textSize = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_size, 50);
         ta.recycle();
     }
 
@@ -135,9 +173,12 @@ public class GeofenceView extends View {
      */
     private void init() {
         mapZoom = 1;
+        polygonText = new PolygonText();
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         mShader = new LinearGradient(0, 0, getMeasuredWidth(), getMeasuredHeight(),
-                new int[]{0x1A398EFF, 0x1A398EFF}, null, Shader.TileMode.CLAMP);
+                new int[]{areaColor, areaColor}, null, Shader.TileMode.CLAMP);
+        mTextBgShader = new LinearGradient(0, 0, getMeasuredWidth(), getMeasuredHeight(),
+                new int[]{textBgColor, textBgColor}, null, Shader.TileMode.CLAMP);
 
         linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         linePaint.setStrokeWidth(lineWidth);
@@ -146,7 +187,21 @@ public class GeofenceView extends View {
         dotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         dotPaint.setStrokeWidth(lineWidth);
 
-        path = new Path();
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setTextSize(textSize);
+        updateTextAttrs();
+
+        polygonLinePath = new Path();
+        polygonTextBgPath = new Path();
+    }
+
+    /**
+     * 修改文字参数
+     */
+    private void updateTextAttrs() {
+        fontMetricsInt = textPaint.getFontMetricsInt();
+        baseline = Math.abs(fontMetricsInt.leading) + Math.abs(fontMetricsInt.ascent);
+        textHeight = Math.abs(fontMetricsInt.bottom - fontMetricsInt.top);
     }
 
     @Override
@@ -207,6 +262,24 @@ public class GeofenceView extends View {
         circleRadius = mRadius / mapZoom;
         updateDotArray();
         invalidate();
+    }
+
+    /**
+     * 设置电子围栏的 区域颜色
+     */
+    public void setAreaColor(int areaColor) {
+        this.areaColor = areaColor;
+        mShader = new LinearGradient(0, 0, getMeasuredWidth(), getMeasuredHeight(),
+                new int[]{areaColor, areaColor}, null, Shader.TileMode.CLAMP);
+    }
+
+    /**
+     * 设置六边形文字背景颜色
+     */
+    public void setTextBgColor(int textBgColor) {
+        this.textBgColor = textBgColor;
+        mTextBgShader = new LinearGradient(0, 0, getMeasuredWidth(), getMeasuredHeight(),
+                new int[]{textBgColor, textBgColor}, null, Shader.TileMode.CLAMP);
     }
 
     /**
@@ -317,7 +390,20 @@ public class GeofenceView extends View {
             }
             drawPolygonLine(canvas);
             drawPolygonDot(canvas);
+            drawPolygonText(canvas);
         }
+    }
+
+    public void setDisTextFormat(String disTextFormat) {
+        this.disTextFormat = disTextFormat;
+    }
+
+    /**
+     * 修改 六边形的 距离文字的大小
+     */
+    public void setTextSize(int textSize) {
+        this.textSize = textSize;
+        updateTextAttrs();
     }
 
     /**
@@ -350,20 +436,20 @@ public class GeofenceView extends View {
      * 画六边形相关的先
      */
     private void drawPolygonLine(Canvas canvas) {
-        path.moveTo(tempArrayPolygon[0][0], tempArrayPolygon[0][1]);
-        path.lineTo(tempArrayPolygon[1][0], tempArrayPolygon[1][1]);
-        path.lineTo(tempArrayPolygon[2][0], tempArrayPolygon[2][1]);
-        path.lineTo(tempArrayPolygon[3][0], tempArrayPolygon[3][1]);
-        path.lineTo(tempArrayPolygon[4][0], tempArrayPolygon[4][1]);
-        path.lineTo(tempArrayPolygon[5][0], tempArrayPolygon[5][1]);
-        path.close();
+        polygonLinePath.moveTo(tempArrayPolygon[0][0], tempArrayPolygon[0][1]);
+        polygonLinePath.lineTo(tempArrayPolygon[1][0], tempArrayPolygon[1][1]);
+        polygonLinePath.lineTo(tempArrayPolygon[2][0], tempArrayPolygon[2][1]);
+        polygonLinePath.lineTo(tempArrayPolygon[3][0], tempArrayPolygon[3][1]);
+        polygonLinePath.lineTo(tempArrayPolygon[4][0], tempArrayPolygon[4][1]);
+        polygonLinePath.lineTo(tempArrayPolygon[5][0], tempArrayPolygon[5][1]);
+        polygonLinePath.close();
         linePaint.setStyle(Paint.Style.STROKE);
-        canvas.drawPath(path, linePaint);
+        canvas.drawPath(polygonLinePath, linePaint);
         linePaint.setStyle(Paint.Style.FILL);
         linePaint.setShader(mShader);
-        canvas.drawPath(path, linePaint);
+        canvas.drawPath(polygonLinePath, linePaint);
         linePaint.setShader(null);
-        path.reset();
+        polygonLinePath.reset();
     }
 
     /**
@@ -388,6 +474,51 @@ public class GeofenceView extends View {
         canvas.drawCircle(tempArrayPolygon[3][0], tempArrayPolygon[3][1], dotRadius, dotPaint);
         canvas.drawCircle(tempArrayPolygon[4][0], tempArrayPolygon[4][1], dotRadius, dotPaint);
         canvas.drawCircle(tempArrayPolygon[5][0], tempArrayPolygon[5][1], dotRadius, dotPaint);
+    }
+
+    /**
+     * 画六边形文字
+     */
+    private void drawPolygonText(Canvas canvas) {
+        int length = tempArrayPolygon.length;
+        for (int i = 0; i < length; i++) {
+            textPaint.setTextSize(textSize);
+            polygonText.distance = Math.sqrt(
+                    Math.pow(tempArrayPolygon[(i + 1) % length][0] - tempArrayPolygon[i % length][0], 2)
+                            + Math.pow(tempArrayPolygon[(i + 1) % length][1] - tempArrayPolygon[i % length][1], 2));
+
+            disText = String.format(disTextFormat, (int) Math.ceil(polygonText.distance * mapZoom));
+            //增加间隙
+            float textW = textPaint.measureText("_" + disText);
+            polygonText.textW = textW;
+            polygonText.textH = textHeight;
+            polygonText.getValues(tempArrayPolygon[i % length][0], tempArrayPolygon[i % length][1],
+                    tempArrayPolygon[(i + 1) % length][0], tempArrayPolygon[(i + 1) % length][1]);
+
+            canvas.save();
+            polygonTextBgPath.moveTo(polygonText.leftTopX, polygonText.leftTopY);
+            polygonTextBgPath.lineTo(polygonText.leftTopX + textW, polygonText.leftTopY);
+            polygonTextBgPath.lineTo(polygonText.leftTopX + textW, polygonText.leftTopY + textHeight);
+            polygonTextBgPath.lineTo(polygonText.leftTopX, polygonText.leftTopY + textHeight);
+            polygonTextBgPath.close();
+
+            canvas.rotate(polygonText.angelDegree, polygonText.leftTopX, polygonText.leftTopY);
+            textPaint.setStyle(Paint.Style.STROKE);
+            textPaint.setColor(textStrokeColor);
+            textPaint.setStrokeWidth(lineWidth);
+            canvas.drawPath(polygonTextBgPath, textPaint);
+
+            textPaint.setStyle(Paint.Style.FILL);
+            textPaint.setShader(mTextBgShader);
+            canvas.drawPath(polygonTextBgPath, textPaint);
+            textPaint.setShader(null);
+            polygonTextBgPath.reset();
+
+            textPaint.setColor(textColor);
+            textPaint.setStyle(Paint.Style.FILL);
+            canvas.drawText(" " + disText, polygonText.leftTopX, polygonText.leftTopY + baseline, textPaint);
+            canvas.restore();
+        }
     }
 
     /**

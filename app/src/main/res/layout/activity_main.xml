@@ -4,33 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
     <SeekBar
         android:id="@+id/sb_test"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_show"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <com.tcl.xiaokeluo.GeofenceView
         android:id="@+id/gv_test"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
-        android:background="#00DDDD"
+        android:background="@drawable/test_bg"
         app:gv_dot_line_color="@color/colorPrimary"
         app:gv_dot_radius="10dp"
         app:gv_line_color="@color/colorAccent"
         app:gv_line_width="2dp"
         app:gv_radius="100dp"
-        app:gv_type="TYPE_PROXIMITY" />
+        app:gv_type="TYPE_POLYGON" />
 </LinearLayout>
