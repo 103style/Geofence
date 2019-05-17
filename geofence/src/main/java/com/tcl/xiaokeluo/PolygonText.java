@@ -47,13 +47,19 @@ public class PolygonText {
             y1 = y2;
             y2 = temp;
         }
+        //文字区域对角线的长度
         double rectDiagonal = Math.sqrt(Math.pow(textH, 2) + Math.pow(textW, 2));
+        //对角线和 文字宽 的角度
         float rectDegree = Math.round(180 * Math.atan(textH * 1.0f / textW) / Math.PI);
         if (y1 < y2) {
+            //右下方向
+
+            //两个点的连线 与 x轴的角度
             angelDegree = Math.round(180 * Math.atan((y2 - y1) / (x2 - x1)) / Math.PI);
+            //文字区域对角线  与 x轴的角度
             float mDegree = angelDegree + rectDegree;
-            leftTopX = Math.round((centerX - rectDiagonal / 2.0f * Math.cos(mDegree)));
-            leftTopY = Math.round((centerY - rectDiagonal / 2.0f * Math.sin(mDegree)));
+            leftTopX = Math.round((centerX - Math.abs(rectDiagonal / 2.0f * Math.cos(mDegree))));
+            leftTopY = Math.round((centerY - Math.abs(rectDiagonal / 2.0f * Math.sin(mDegree))));
             rightBottomX = Math.round((leftTopX + rectDiagonal * Math.cos(mDegree)));
             rightBottomY = Math.round((leftTopY + rectDiagonal * Math.sin(mDegree)));
         } else if (y1 == y2) {
@@ -63,12 +69,17 @@ public class PolygonText {
             rightBottomX = centerX + textW / 2.0f;
             rightBottomY = centerY + textH / 2.0f;
         } else {
+            //右上方向
+
+            //两个点的连线 与 x轴的角度
             angelDegree = Math.round(180 * Math.atan((y1 - y2) / (x2 - x1)) / Math.PI);
+            //文字区域对角线  与 x轴的角度
             float mDegree = angelDegree - rectDegree;
-            leftTopX = Math.round((centerX - rectDiagonal / 2.0f * Math.cos(mDegree)));
-            leftTopY = Math.round((centerY - rectDiagonal / 2.0f * Math.sin(mDegree)));
+            leftTopX = Math.round((centerX - Math.abs(rectDiagonal / 2.0f * Math.cos(mDegree))));
+            leftTopY = Math.round((centerY + Math.abs(rectDiagonal / 2.0f * Math.sin(mDegree))));
             rightBottomX = Math.round((leftTopX + rectDiagonal * Math.cos(mDegree)));
             rightBottomY = Math.round((leftTopY + rectDiagonal * Math.sin(mDegree)));
+            //旋转时 顺时针旋转 所以取负数
             angelDegree = -angelDegree;
         }
     }
