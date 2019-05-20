@@ -1,1 +1,1 @@
-include ':app', ':geofence'
+include ':demo', ':geofence'

@@ -138,6 +138,10 @@ public class GeofenceView extends View {
      * 文字背景
      */
     private Rect textBgRect;
+    /**
+     * 是否显示六边形长度文字
+     */
+    private boolean showText;
 
     public GeofenceView(Context context) {
         this(context, null);
@@ -165,6 +169,7 @@ public class GeofenceView extends View {
         dotLineColor = ta.getColor(R.styleable.GeofenceView_gv_dot_line_color, 0xFF398EFF);
         lineColor = ta.getColor(R.styleable.GeofenceView_gv_line_color, 0xFF398EFF);
         areaColor = ta.getColor(R.styleable.GeofenceView_gv_area_color, 0x1A398EFF);
+        showText = ta.getBoolean(R.styleable.GeofenceView_gv_show_text, true);
         textBgColor = ta.getColor(R.styleable.GeofenceView_gv_text_bg_color, 0xFFFFFFFF);
         textStrokeColor = ta.getColor(R.styleable.GeofenceView_gv_text_bg_stroke_color, 0x61398EFF);
         textColor = ta.getColor(R.styleable.GeofenceView_gv_text_color, 0xFF398EFF);
@@ -293,6 +298,13 @@ public class GeofenceView extends View {
     }
 
     /**
+     * 是否显示六边形长度文字
+     */
+    public void setShowText(boolean showText) {
+        this.showText = showText;
+    }
+
+    /**
      * 设置地图缩放级别
      *
      * @param mapZoom 地图缩放
@@ -400,7 +412,10 @@ public class GeofenceView extends View {
             }
             drawPolygonLine(canvas);
             drawPolygonDot(canvas);
-            drawPolygonText(canvas);
+
+            if (showText) {
+                drawPolygonText(canvas);
+            }
         }
     }
 

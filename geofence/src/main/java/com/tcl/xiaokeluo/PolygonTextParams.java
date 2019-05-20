@@ -2,7 +2,7 @@ package com.tcl.xiaokeluo;
 
 /**
  * @author xiaoke.luo@tcl.com 2019/5/15 17:48
- * 极端两点之前 要显示文字的坐标 大小  距离 角度
+ * 六边形 两点之间 要显示文字的坐标 大小  距离 角度 的参数
  */
 public class PolygonTextParams {
     /**
