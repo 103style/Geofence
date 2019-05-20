@@ -50,6 +50,7 @@ dependencies {
 ```
 
 #### Attrs
+* xml:
 ```
 <declare-styleable name="GeofenceView">
     <!-- 圆形 或者 六边形 -->
@@ -84,6 +85,7 @@ dependencies {
 </declare-styleable>
 ```
 
+* Method:
 
 ```
     /**
