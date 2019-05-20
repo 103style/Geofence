@@ -4,7 +4,7 @@
 GeofenceView  ： 电子围栏视图（圆形 和 六边形）
 
 
-#### Usage
+#### Install
 add to the project `build.gradle`
 ```
 allprojects {
@@ -22,6 +22,8 @@ dependencies {
 
 ```
 
+
+#### Usage
 ```
 <com.tcl.xiaokeluo.GeofenceView
     android:id="@+id/gv_test"
