@@ -83,3 +83,48 @@ dependencies {
     <attr name="gv_text_bg_line_width" format="dimension" />
 </declare-styleable>
 ```
+
+
+```
+    /**
+     * 设置展示形状
+     */
+    public void setType(@GEOFENCETYPE int mType) {}
+
+    /**
+     * 设置电子围栏的 区域颜色
+     */
+    public void setAreaColor(int areaColor) {}
+
+    /**
+     * 设置六边形文字背景颜色
+     */
+    public void setTextBgColor(int textBgColor) {}
+
+    /**
+     * 是否显示六边形长度文字
+     */
+    public void setShowText(boolean showText) {}
+
+    /**
+     * 设置地图缩放级别
+     *
+     * @param mapZoom 地图缩放
+     */
+    public void setMapZoom(float mapZoom) {}
+    
+    /**
+     * 设置六边形显示问题的格式(需带 %d)
+     */
+    public void setDisTextFormat(String disTextFormat) {}
+
+    /**
+     * 修改 六边形的 距离文字的大小
+     */
+    public void setTextSize(int textSize) {}
+
+    /**
+     * 设置圆形的半径
+     */
+    public void setCircleRadius(float circleRadius) {}
+```
