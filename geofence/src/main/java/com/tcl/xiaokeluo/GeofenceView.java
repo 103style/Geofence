@@ -120,7 +120,7 @@ public class GeofenceView extends View {
     /**
      * 计算文字的位置
      */
-    private PolygonText polygonText;
+    private PolygonTextParams polygonTextParams;
     /**
      * 文字属性
      */
@@ -173,7 +173,7 @@ public class GeofenceView extends View {
      */
     private void init() {
         mapZoom = 1;
-        polygonText = new PolygonText();
+        polygonTextParams = new PolygonTextParams();
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         mShader = new LinearGradient(0, 0, getMeasuredWidth(), getMeasuredHeight(),
                 new int[]{areaColor, areaColor}, null, Shader.TileMode.CLAMP);
@@ -483,26 +483,29 @@ public class GeofenceView extends View {
         int length = tempArrayPolygon.length;
         for (int i = 0; i < length; i++) {
             textPaint.setTextSize(textSize);
-            polygonText.distance = Math.sqrt(
+            polygonTextParams.distance = Math.sqrt(
                     Math.pow(tempArrayPolygon[(i + 1) % length][0] - tempArrayPolygon[i % length][0], 2)
                             + Math.pow(tempArrayPolygon[(i + 1) % length][1] - tempArrayPolygon[i % length][1], 2));
 
-            disText = String.format(disTextFormat, (int) Math.ceil(polygonText.distance * mapZoom));
+            disText = String.format(disTextFormat, (int) Math.ceil(polygonTextParams.distance * mapZoom));
             //增加间隙
             float textW = textPaint.measureText("_" + disText);
-            polygonText.textW = textW;
-            polygonText.textH = textHeight;
-            polygonText.getValues(tempArrayPolygon[i % length][0], tempArrayPolygon[i % length][1],
+            polygonTextParams.textW = textW;
+            polygonTextParams.textH = textHeight;
+            polygonTextParams.getValues(tempArrayPolygon[i % length][0], tempArrayPolygon[i % length][1],
                     tempArrayPolygon[(i + 1) % length][0], tempArrayPolygon[(i + 1) % length][1]);
 
             canvas.save();
-            polygonTextBgPath.moveTo(polygonText.leftTopX, polygonText.leftTopY);
-            polygonTextBgPath.lineTo(polygonText.leftTopX + textW, polygonText.leftTopY);
-            polygonTextBgPath.lineTo(polygonText.leftTopX + textW, polygonText.leftTopY + textHeight);
-            polygonTextBgPath.lineTo(polygonText.leftTopX, polygonText.leftTopY + textHeight);
+
+            canvas.rotate(polygonTextParams.angelDegree, polygonTextParams.x1, polygonTextParams.y1);
+
+            polygonTextBgPath.moveTo(polygonTextParams.leftTopX, polygonTextParams.leftTopY);
+            polygonTextBgPath.lineTo(polygonTextParams.leftTopX + textW, polygonTextParams.leftTopY);
+            polygonTextBgPath.lineTo(polygonTextParams.leftTopX + textW, polygonTextParams.leftTopY + textHeight);
+            polygonTextBgPath.lineTo(polygonTextParams.leftTopX, polygonTextParams.leftTopY + textHeight);
             polygonTextBgPath.close();
 
-            canvas.rotate(polygonText.angelDegree, polygonText.leftTopX, polygonText.leftTopY);
+
             textPaint.setStyle(Paint.Style.STROKE);
             textPaint.setColor(textStrokeColor);
             textPaint.setStrokeWidth(lineWidth);
@@ -516,7 +519,7 @@ public class GeofenceView extends View {
 
             textPaint.setColor(textColor);
             textPaint.setStyle(Paint.Style.FILL);
-            canvas.drawText(" " + disText, polygonText.leftTopX, polygonText.leftTopY + baseline, textPaint);
+            canvas.drawText(" " + disText, polygonTextParams.leftTopX, polygonTextParams.leftTopY + baseline, textPaint);
             canvas.restore();
         }
     }
@@ -552,7 +555,6 @@ public class GeofenceView extends View {
         }
         return super.onTouchEvent(event);
     }
-
 
     /**
      * 检查触摸的位置是不是在点上
