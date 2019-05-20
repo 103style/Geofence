@@ -7,8 +7,6 @@ GeofenceView  ： 电子围栏视图（圆形 和 六边形）
 
 <img src="https://github.com/103style/Geofence/blob/master/screenshot/Screenshot1.png"  height="432" width="216">  <img src="https://github.com/103style/Geofence/blob/master/screenshot/Screenshot2.png"  height="432" width="216">  <img src="https://github.com/103style/Geofence/blob/master/screenshot/Screenshot3.png"  height="432" width="216">
 
-<img src="http:..." width = 30% height = 30% />
-
 #### Install
 add to the project `build.gradle`
 ```
