@@ -5,6 +5,23 @@ GeofenceView  ： 电子围栏视图（圆形 和 六边形）
 
 
 #### Usage
+add to the project `build.gradle`
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+add to the app  `build.gradle`
+```
+dependencies {
+        implementation 'com.github.103style:Geofence:0.0.1'
+}
+
+```
+
 ```
 <com.tcl.xiaokeluo.GeofenceView
     android:id="@+id/gv_test"
