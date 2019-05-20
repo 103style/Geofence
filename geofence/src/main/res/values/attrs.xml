@@ -11,8 +11,9 @@
         <attr name="gv_line_color" format="color" />
         <attr name="gv_line_width" format="dimension" />
         <attr name="gv_text_size" format="dimension" />
+        <attr name="gv_text_color" format="color" />
         <attr name="gv_text_bg_color" format="color" />
         <attr name="gv_text_bg_stroke_color" format="color" />
-        <attr name="gv_text_color" format="color" />
+        <attr name="gv_text_bg_line_width" format="dimension" />
     </declare-styleable>
 </resources>

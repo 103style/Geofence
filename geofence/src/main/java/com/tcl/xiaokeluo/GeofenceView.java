@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.Shader;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
@@ -36,11 +37,11 @@ public class GeofenceView extends View {
     /**
      * 对应的画笔
      */
-    private Paint linePaint, dotPaint, textPaint;
+    private Paint linePaint, dotPaint, textPaint, textBgPaint;
     /**
      * 半径、线宽
      */
-    private float dotRadius, lineWidth;
+    private float dotRadius, lineWidth, textBgLineWidth;
     /**
      * 设置的初始半径
      */
@@ -133,6 +134,10 @@ public class GeofenceView extends View {
      * 文字高度
      */
     private int textHeight;
+    /**
+     * 文字背景
+     */
+    private Rect textBgRect;
 
     public GeofenceView(Context context) {
         this(context, null);
@@ -164,7 +169,8 @@ public class GeofenceView extends View {
         textStrokeColor = ta.getColor(R.styleable.GeofenceView_gv_text_bg_stroke_color, 0x61398EFF);
         textColor = ta.getColor(R.styleable.GeofenceView_gv_text_color, 0xFF398EFF);
         lineWidth = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_line_width, 5);
-        textSize = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_size, 50);
+        textBgLineWidth = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_bg_line_width, 5);
+        textSize = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_size, 25);
         ta.recycle();
     }
 
@@ -173,6 +179,7 @@ public class GeofenceView extends View {
      */
     private void init() {
         mapZoom = 1;
+        textBgRect = new Rect();
         polygonTextParams = new PolygonTextParams();
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         mShader = new LinearGradient(0, 0, getMeasuredWidth(), getMeasuredHeight(),
@@ -190,6 +197,9 @@ public class GeofenceView extends View {
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextSize(textSize);
         updateTextAttrs();
+
+        textBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
 
         polygonLinePath = new Path();
         polygonTextBgPath = new Path();
@@ -482,7 +492,6 @@ public class GeofenceView extends View {
     private void drawPolygonText(Canvas canvas) {
         int length = tempArrayPolygon.length;
         for (int i = 0; i < length; i++) {
-            textPaint.setTextSize(textSize);
             polygonTextParams.distance = Math.sqrt(
                     Math.pow(tempArrayPolygon[(i + 1) % length][0] - tempArrayPolygon[i % length][0], 2)
                             + Math.pow(tempArrayPolygon[(i + 1) % length][1] - tempArrayPolygon[i % length][1], 2));
@@ -499,22 +508,25 @@ public class GeofenceView extends View {
 
             canvas.rotate(polygonTextParams.angelDegree, polygonTextParams.x1, polygonTextParams.y1);
 
+
+            textBgPaint.setStyle(Paint.Style.FILL);
+            textBgPaint.setShader(mTextBgShader);
+            textBgPaint.setColor(textBgColor);
+            textBgRect.set((int) polygonTextParams.leftTopX, (int) polygonTextParams.leftTopY,
+                    (int) (polygonTextParams.leftTopX + textW), (int) (polygonTextParams.leftTopY + textHeight));
+            canvas.drawRect(textBgRect, textBgPaint);
+
+
             polygonTextBgPath.moveTo(polygonTextParams.leftTopX, polygonTextParams.leftTopY);
             polygonTextBgPath.lineTo(polygonTextParams.leftTopX + textW, polygonTextParams.leftTopY);
             polygonTextBgPath.lineTo(polygonTextParams.leftTopX + textW, polygonTextParams.leftTopY + textHeight);
             polygonTextBgPath.lineTo(polygonTextParams.leftTopX, polygonTextParams.leftTopY + textHeight);
             polygonTextBgPath.close();
 
-
             textPaint.setStyle(Paint.Style.STROKE);
             textPaint.setColor(textStrokeColor);
-            textPaint.setStrokeWidth(lineWidth);
+            textPaint.setStrokeWidth(textBgLineWidth);
             canvas.drawPath(polygonTextBgPath, textPaint);
-
-            textPaint.setStyle(Paint.Style.FILL);
-            textPaint.setShader(mTextBgShader);
-            canvas.drawPath(polygonTextBgPath, textPaint);
-            textPaint.setShader(null);
             polygonTextBgPath.reset();
 
             textPaint.setColor(textColor);

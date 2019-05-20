@@ -31,10 +31,17 @@
         android:layout_height="300dp"
         android:layout_gravity="center"
         android:background="@drawable/test_bg"
+        app:gv_area_color="#1A398EFF"
         app:gv_dot_line_color="@color/colorPrimary"
         app:gv_dot_radius="10dp"
         app:gv_line_color="@color/colorAccent"
         app:gv_line_width="2dp"
         app:gv_radius="100dp"
+        app:gv_text_bg_color="#FFFFFF"
+        app:gv_text_bg_line_width="1dp"
+        app:gv_text_bg_stroke_color="#ffff00"
+        app:gv_text_color="#ff00ff"
+        app:gv_text_size="14dp"
         app:gv_type="TYPE_POLYGON" />
+
 </LinearLayout>
