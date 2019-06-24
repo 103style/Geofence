@@ -511,7 +511,9 @@ public class GeofenceView extends View {
                     Math.pow(tempArrayPolygon[(i + 1) % length][0] - tempArrayPolygon[i % length][0], 2)
                             + Math.pow(tempArrayPolygon[(i + 1) % length][1] - tempArrayPolygon[i % length][1], 2));
 
-            disText = String.format(disTextFormat, (int) Math.ceil(polygonTextParams.distance * mapZoom));
+            int dis = (int) Math.ceil(polygonTextParams.distance * mapZoom);
+            dis = dis - dis % 10;
+            disText = String.format(disTextFormat, dis);
             //增加间隙
             float textW = textPaint.measureText("_" + disText);
             polygonTextParams.textW = textW;
@@ -688,13 +690,10 @@ public class GeofenceView extends View {
                 tempArrayPolygon[(moveDotIndex + s + 3) % s][0], tempArrayPolygon[(moveDotIndex + s + 3) % s][1])) {
             return true;
         }
-        if (checkLineIntersect(x, y,
+        return checkLineIntersect(x, y,
                 tempArrayPolygon[(moveDotIndex + s - 1) % s][0], tempArrayPolygon[(moveDotIndex + s - 1) % s][1],
                 tempArrayPolygon[(moveDotIndex + s + 3) % s][0], tempArrayPolygon[(moveDotIndex + s + 3) % s][1],
-                tempArrayPolygon[(moveDotIndex + s + 4) % s][0], tempArrayPolygon[(moveDotIndex + s + 4) % s][1])) {
-            return true;
-        }
-        return false;
+                tempArrayPolygon[(moveDotIndex + s + 4) % s][0], tempArrayPolygon[(moveDotIndex + s + 4) % s][1]);
     }
 
     /**
