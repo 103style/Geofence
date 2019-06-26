@@ -20,7 +20,7 @@ allprojects {
 add to the app  `build.gradle`
 ```
 dependencies {
-        implementation 'com.github.103style:Geofence:0.0.4'
+        implementation 'com.github.103style:Geofence:0.0.5'
 }
 
 ```
@@ -46,6 +46,7 @@ dependencies {
     app:gv_text_bg_stroke_color="#ffff00"
     app:gv_text_color="#ff00ff"
     app:gv_text_size="14dp"
+    app:gv_dot_touch_area_enlarge_times="2"
     app:gv_type="TYPE_POLYGON" />
 ```
 
@@ -82,6 +83,8 @@ dependencies {
     <attr name="gv_text_bg_stroke_color" format="color" />
     <!-- 六边形 边长度 文字的背景描边宽度 -->
     <attr name="gv_text_bg_line_width" format="dimension" />
+    <!-- 六边形 触摸点范围的 放大倍数-->
+    <attr name="gv_dot_touch_area_enlarge_times" format="integer" />
 </declare-styleable>
 ```
 
@@ -129,4 +132,9 @@ dependencies {
      * 设置圆形的半径
      */
     public void setCircleRadius(float circleRadius) {}
+    
+    /**
+     * 设置六变形点的触摸范围放大倍数
+     */
+    public void setPolygonDotTouchAreaEnlargeTimes(int times){}
 ```
