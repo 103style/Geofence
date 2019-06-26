@@ -45,7 +45,7 @@
         android:background="@drawable/test_bg"
         app:gv_area_color="#1A398EFF"
         app:gv_dot_line_color="#FF398EFF"
-        app:gv_dot_radius="10dp"
+        app:gv_dot_radius="5dp"
         app:gv_line_color="#FF398EFF"
         app:gv_line_width="1dp"
         app:gv_radius="100dp"

@@ -600,8 +600,9 @@ public class GeofenceView extends View {
      * 六边形 检查触摸的位置是不是在点上
      */
     private boolean checkPointPolygon(float x, float y) {
+        float range = dotRadius * 2;
         for (int i = 0; i < tempArrayPolygon.length; i++) {
-            if (Math.abs(x - tempArrayPolygon[i][0]) < dotRadius && Math.abs(y - tempArrayPolygon[i][1]) < dotRadius) {
+            if (Math.abs(x - tempArrayPolygon[i][0]) < range && Math.abs(y - tempArrayPolygon[i][1]) < range) {
                 moveDotIndex = i;
                 statueMove = true;
                 return true;
