@@ -55,6 +55,7 @@
         app:gv_text_bg_stroke_color="#61398EFF"
         app:gv_text_color="#FF398EFF"
         app:gv_text_size="14dp"
+        app:gv_dot_touch_area_enlarge_times="2"
         app:gv_type="TYPE_POLYGON" />
 
 </LinearLayout>

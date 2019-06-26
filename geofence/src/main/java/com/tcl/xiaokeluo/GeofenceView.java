@@ -142,6 +142,10 @@ public class GeofenceView extends View {
      * 是否显示六边形长度文字
      */
     private boolean showText;
+    /**
+     * 多边形点的触摸范围放大倍数
+     */
+    private int polygonDotTouchAreaEnlargeTimes = 2;
 
     public GeofenceView(Context context) {
         this(context, null);
@@ -176,6 +180,7 @@ public class GeofenceView extends View {
         lineWidth = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_line_width, 5);
         textBgLineWidth = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_bg_line_width, 5);
         textSize = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_size, 25);
+        polygonDotTouchAreaEnlargeTimes = ta.getInteger(R.styleable.GeofenceView_gv_dot_touch_area_enlarge_times, 2);
         ta.recycle();
     }
 
@@ -305,21 +310,6 @@ public class GeofenceView extends View {
     }
 
     /**
-     * 设置地图缩放级别
-     *
-     * @param mapZoom 地图缩放
-     */
-    public void setMapZoom(float mapZoom) {
-        if (this.mapZoom == mapZoom) {
-            return;
-        }
-        this.mapZoom = mapZoom;
-        circleRadius = circleSetRadius / mapZoom;
-        updateDotArray();
-        invalidate();
-    }
-
-    /**
      * 设置圆形的 四个点坐标
      * -     1
      * -  0     2
@@ -443,6 +433,42 @@ public class GeofenceView extends View {
         if (!isPolygon()) {
             invalidate();
         }
+    }
+
+    /**
+     * 获取放缩比例
+     */
+    public float getMapZoom() {
+        return mapZoom;
+    }
+
+    /**
+     * 设置地图缩放级别
+     *
+     * @param mapZoom 地图缩放
+     */
+    public void setMapZoom(float mapZoom) {
+        if (this.mapZoom == mapZoom) {
+            return;
+        }
+        this.mapZoom = mapZoom;
+        circleRadius = circleSetRadius / mapZoom;
+        updateDotArray();
+        invalidate();
+    }
+
+    /**
+     * 获取六变形点的触摸范围放大倍数
+     */
+    public int getPolygonDotTouchAreaEnlargeTimes() {
+        return polygonDotTouchAreaEnlargeTimes;
+    }
+
+    /**
+     * 设置六变形点的触摸范围放大倍数
+     */
+    public void setPolygonDotTouchAreaEnlargeTimes(int times) {
+        this.polygonDotTouchAreaEnlargeTimes = times;
     }
 
     /**
@@ -600,7 +626,7 @@ public class GeofenceView extends View {
      * 六边形 检查触摸的位置是不是在点上
      */
     private boolean checkPointPolygon(float x, float y) {
-        float range = dotRadius * 2;
+        float range = dotRadius * polygonDotTouchAreaEnlargeTimes;
         for (int i = 0; i < tempArrayPolygon.length; i++) {
             if (Math.abs(x - tempArrayPolygon[i][0]) < range && Math.abs(y - tempArrayPolygon[i][1]) < range) {
                 moveDotIndex = i;
