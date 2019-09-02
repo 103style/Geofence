@@ -308,6 +308,20 @@ public class GeofenceView extends View {
     }
 
     /**
+     * 获取六边形 边长度 文字在两点之间距离不够文字宽度时 是否隐藏
+     */
+    public boolean isHideTextWhenNoEnoughSpace() {
+        return hideTextWhenNoEnoughSpace;
+    }
+
+    /**
+     * 六边形 边长度 文字在两点之间距离不够文字宽度时 是否隐藏
+     */
+    public void setHideTextWhenNoEnoughSpace(boolean hideTextWhenNoEnoughSpace) {
+        this.hideTextWhenNoEnoughSpace = hideTextWhenNoEnoughSpace;
+    }
+
+    /**
      * 是否显示六边形长度文字
      */
     public void setShowText(boolean showText) {

@@ -20,7 +20,7 @@ allprojects {
 add to the app  `build.gradle`
 ```
 dependencies {
-        implementation 'com.github.103style:Geofence:0.0.5'
+        implementation 'com.github.103style:Geofence:0.0.7'
 }
 
 ```
@@ -30,23 +30,24 @@ dependencies {
 ```
 <com.tcl.xiaokeluo.GeofenceView
     android:id="@+id/gv_test"
-    android:layout_width="300dp"
-    android:layout_height="300dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:background="@drawable/test_bg"
     app:gv_area_color="#1A398EFF"
-    app:gv_dot_line_color="@color/colorPrimary"
-    app:gv_dot_radius="10dp"
-    app:gv_line_color="@color/colorAccent"
-    app:gv_line_width="2dp"
-    app:gv_radius="100dp"
-    app:gv_text_bg_color="#FFFFFF"
-    app:gv_show_text="true"
-    app:gv_text_bg_line_width="1dp"
-    app:gv_text_bg_stroke_color="#ffff00"
-    app:gv_text_color="#ff00ff"
-    app:gv_text_size="14dp"
+    app:gv_dot_line_color="#FF398EFF"
+    app:gv_dot_radius="5dp"
     app:gv_dot_touch_area_enlarge_times="2"
+    app:gv_hide_txt_when_no_enough_space="true"
+    app:gv_line_color="#FF398EFF"
+    app:gv_line_width="1dp"
+    app:gv_radius="100dp"
+    app:gv_show_text="true"
+    app:gv_text_bg_color="#FFFFFF"
+    app:gv_text_bg_line_width="1dp"
+    app:gv_text_bg_stroke_color="#61398EFF"
+    app:gv_text_color="#FF398EFF"
+    app:gv_text_size="14dp"
     app:gv_type="TYPE_POLYGON" />
 ```
 
@@ -85,6 +86,8 @@ dependencies {
     <attr name="gv_text_bg_line_width" format="dimension" />
     <!-- 六边形 触摸点范围的 放大倍数-->
     <attr name="gv_dot_touch_area_enlarge_times" format="integer" />
+    <!-- 六边形 边长度 文字在两点之间距离不够文字宽度时 是否隐藏 -->
+    <attr name="gv_hide_txt_when_no_enough_space" format="boolean" />
 </declare-styleable>
 ```
 
@@ -137,4 +140,8 @@ dependencies {
      * 设置六变形点的触摸范围放大倍数
      */
     public void setPolygonDotTouchAreaEnlargeTimes(int times){}
+    /**
+     * 六边形 边长度 文字在两点之间距离不够文字宽度时 是否隐藏
+     */
+    public void setHideTextWhenNoEnoughSpace(boolean hideTextWhenNoEnoughSpace) {}
 ```
