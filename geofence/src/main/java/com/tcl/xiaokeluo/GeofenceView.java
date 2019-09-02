@@ -143,6 +143,10 @@ public class GeofenceView extends View {
      */
     private boolean showText;
     /**
+     * 六边形 边长度 文字在两点之间距离不够文字宽度时 是否隐藏
+     */
+    private boolean hideTextWhenNoEnoughSpace = false;
+    /**
      * 多边形点的触摸范围放大倍数
      */
     private int polygonDotTouchAreaEnlargeTimes = 2;
@@ -181,6 +185,7 @@ public class GeofenceView extends View {
         textBgLineWidth = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_bg_line_width, 5);
         textSize = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_size, 25);
         polygonDotTouchAreaEnlargeTimes = ta.getInteger(R.styleable.GeofenceView_gv_dot_touch_area_enlarge_times, 2);
+        hideTextWhenNoEnoughSpace = ta.getBoolean(R.styleable.GeofenceView_gv_hide_txt_when_no_enough_space, false);
         ta.recycle();
     }
 
@@ -542,6 +547,9 @@ public class GeofenceView extends View {
             disText = String.format(disTextFormat, dis);
             //增加间隙
             float textW = textPaint.measureText("_" + disText);
+            if (textW >= polygonTextParams.distance && hideTextWhenNoEnoughSpace) {
+                continue;
+            }
             polygonTextParams.textW = textW;
             polygonTextParams.textH = textHeight;
             polygonTextParams.getValues(tempArrayPolygon[i % length][0], tempArrayPolygon[i % length][1],
