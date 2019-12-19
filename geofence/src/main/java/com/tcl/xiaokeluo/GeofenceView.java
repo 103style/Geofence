@@ -444,9 +444,9 @@ public class GeofenceView extends View {
      * 设置圆形的半径
      */
     public void setCircleRadius(float circleRadius) {
-        if (circleRadius == this.circleSetRadius) {
-            return;
-        }
+//        if (circleRadius == this.circleSetRadius) {
+//            return;
+//        }
         circleSetRadius = circleRadius;
         this.circleRadius = circleSetRadius / mapZoom;
         if (!isPolygon()) {
