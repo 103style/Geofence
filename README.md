@@ -27,7 +27,7 @@ allprojects {
 add to the app  `build.gradle`
 ```
 dependencies {
-        implementation 'com.github.103style:Geofence:0.0.7'
+        implementation 'com.github.103style:Geofence:0.0.8'
 }
 
 ```

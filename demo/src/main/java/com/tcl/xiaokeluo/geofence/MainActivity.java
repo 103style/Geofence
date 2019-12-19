@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 geofenceView.setType(checkedId == R.id.rb_proximity ? GeofenceView.TYPE_PROXIMITY : GeofenceView.TYPE_POLYGON);
                 sbRadius.setVisibility(checkedId == R.id.rb_proximity ? View.VISIBLE : View.GONE);
+                geofenceView.setCircleRadius(sbRadius.getProgress());
             }
         });
 
