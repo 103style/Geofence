@@ -28,6 +28,7 @@
             android:text="POLYGON" />
     </RadioGroup>
 
+
     <SeekBar
         android:id="@+id/sb_radius"
         android:layout_width="match_parent"
@@ -44,6 +45,8 @@
         android:layout_gravity="center"
         android:background="@drawable/test_bg"
         app:gv_area_color="#1A398EFF"
+        app:gv_dis_txt_divisible_by_10="true"
+        app:gv_dis_txt_format="%dm"
         app:gv_dot_line_color="#FF398EFF"
         app:gv_dot_radius="5dp"
         app:gv_dot_touch_area_enlarge_times="2"

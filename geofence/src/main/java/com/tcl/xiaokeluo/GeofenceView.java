@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.support.annotation.IntDef;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,7 @@ public class GeofenceView extends View {
      * 六边形
      */
     public static final int TYPE_POLYGON = 2;
+    private final String DEFAULT_DIS_TEXT_FORMAT = "%dm";
     /**
      * 当前的图形类别
      */
@@ -54,7 +56,6 @@ public class GeofenceView extends View {
      * 设置的圆的半径 不随缩放改变
      */
     private float circleSetRadius;
-
     private Path polygonLinePath, polygonTextBgPath;
     /**
      * 圆形 和  六边形对应的点坐标  始终是不缩放的坐标
@@ -73,12 +74,10 @@ public class GeofenceView extends View {
      * 保存缩放变化之后的坐标
      */
     private float[][] tempArrayProximity, tempArrayPolygon;
-
     /**
      * 区域遮罩颜色
      */
     private Shader mShader, mTextBgShader;
-
     /**
      * 颜色
      */
@@ -113,7 +112,7 @@ public class GeofenceView extends View {
     /**
      * 距离文字格式  100m
      */
-    private String disTextFormat = "%dm";
+    private String disTextFormat = DEFAULT_DIS_TEXT_FORMAT;
     /**
      * 多边形距离的文字大小
      */
@@ -151,6 +150,11 @@ public class GeofenceView extends View {
      */
     private int polygonDotTouchAreaEnlargeTimes = 2;
 
+    /**
+     * 距离显示得问题是否显示为能整除10
+     */
+    private boolean disTextDivisibleBy10 = true;
+
     public GeofenceView(Context context) {
         this(context, null);
     }
@@ -186,6 +190,11 @@ public class GeofenceView extends View {
         textSize = ta.getDimensionPixelOffset(R.styleable.GeofenceView_gv_text_size, 25);
         polygonDotTouchAreaEnlargeTimes = ta.getInteger(R.styleable.GeofenceView_gv_dot_touch_area_enlarge_times, 2);
         hideTextWhenNoEnoughSpace = ta.getBoolean(R.styleable.GeofenceView_gv_hide_txt_when_no_enough_space, false);
+        disTextFormat = ta.getString(R.styleable.GeofenceView_gv_dis_txt_format);
+        if (TextUtils.isEmpty(disTextFormat)) {
+            disTextFormat = DEFAULT_DIS_TEXT_FORMAT;
+        }
+        disTextDivisibleBy10 = ta.getBoolean(R.styleable.GeofenceView_gv_dis_txt_divisible_by_10, true);
         ta.recycle();
     }
 
@@ -428,6 +437,11 @@ public class GeofenceView extends View {
         }
     }
 
+    public void setDisTextDivisibleBy10(boolean disTextDivisibleBy10) {
+        this.disTextDivisibleBy10 = disTextDivisibleBy10;
+    }
+
+
     public void setDisTextFormat(String disTextFormat) {
         this.disTextFormat = disTextFormat;
     }
@@ -557,7 +571,9 @@ public class GeofenceView extends View {
                             + Math.pow(tempArrayPolygon[(i + 1) % length][1] - tempArrayPolygon[i % length][1], 2));
 
             int dis = (int) Math.ceil(polygonTextParams.distance * mapZoom);
-            dis = dis - dis % 10;
+            if (disTextDivisibleBy10) {
+                dis = dis - dis % 10;
+            }
             disText = String.format(disTextFormat, dis);
             //增加间隙
             float textW = textPaint.measureText("_" + disText);
