@@ -7,6 +7,8 @@ GeofenceView  ： 电子围栏视图（圆形 和 六边形）
 
 #### ScreenShot
 
+<img src="https://github.com/103style/Geofence/blob/master/screenshot/Screenshot5.png"  height="432" width="216">
+
 <img src="https://github.com/103style/Geofence/blob/master/screenshot/Screenshot1.png"  height="432" width="216">  <img src="https://github.com/103style/Geofence/blob/master/screenshot/Screenshot2.png"  height="432" width="216">  <img src="https://github.com/103style/Geofence/blob/master/screenshot/Screenshot3.png"  height="432" width="216">
 
 
@@ -27,7 +29,7 @@ allprojects {
 add to the app  `build.gradle`
 ```
 dependencies {
-        implementation 'com.github.103style:Geofence:0.0.8'
+        implementation 'com.github.103style:Geofence:0.0.9'
 }
 
 ```
@@ -95,6 +97,10 @@ dependencies {
     <attr name="gv_dot_touch_area_enlarge_times" format="integer" />
     <!-- 六边形 边长度 文字在两点之间距离不够文字宽度时 是否隐藏 -->
     <attr name="gv_hide_txt_when_no_enough_space" format="boolean" />
+    <!--    距离显示的格式 %d m     -->
+    <attr name="gv_dis_txt_format" format="string" />
+    <!--    距离文字是否显示为能整除10    -->
+    <attr name="gv_dis_txt_divisible_by_10" format="boolean" />
 </declare-styleable>
 ```
 
@@ -151,4 +157,8 @@ dependencies {
      * 六边形 边长度 文字在两点之间距离不够文字宽度时 是否隐藏
      */
     public void setHideTextWhenNoEnoughSpace(boolean hideTextWhenNoEnoughSpace) {}
+    /**
+     * 距离文字是否显示为整除10
+     */
+    public void setDisTextDivisibleBy10(boolean disTextDivisibleBy10) {}
 ```
