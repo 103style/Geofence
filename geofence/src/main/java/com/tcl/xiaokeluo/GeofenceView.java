@@ -293,7 +293,11 @@ public class GeofenceView extends View {
             return;
         }
         this.mType = mType;
-        circleRadius = mRadius / mapZoom;
+        if (mType == TYPE_POLYGON) {
+            circleRadius = mRadius / mapZoom;
+        } else {
+            circleRadius = circleSetRadius / mapZoom;
+        }
         updateDotArray();
         invalidate();
     }
